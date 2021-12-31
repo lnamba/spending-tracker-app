@@ -22,9 +22,8 @@ const createEntry = async ({
   try {
     const docRef = await addDoc(collection(db, 'entries'), {
       itemName,
-      dateCreated: new Date(),
       userId: 'ab68f28guE15vwiqbBZ9', 
-      entryDate: new Date(),
+      entryDate: new Date(entryDate).toISOString() || new Date().toISOString(),
       amount: amount ? parseFloat(amount) : 0,
       category,
       note: note || '',

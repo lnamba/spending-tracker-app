@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-     <SpendingForm />
+     <SpendingForm @newEntryAdded="onNewEntry" />
 
      <SpendingLog :entries="entries" />
   </div>
@@ -30,8 +30,17 @@ export default {
   },
 
   async mounted() {
-    this.entries = await listEntries();
-    console.log(this.entries)
+    this.entries = await this.getEntries();
+  },
+
+  methods: {
+    async getEntries() {
+      return listEntries();
+    },
+
+    async onNewEntry() {
+      this.entries = await this.getEntries();
+    }
   }
 }
 </script>

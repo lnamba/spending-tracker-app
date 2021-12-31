@@ -8,7 +8,7 @@
 
       <div class="entry-detail">
         <span>Date</span>
-        <span>{{ entry.entryDate.toDate() }}</span>
+        <span>{{ entry.entryDate }}</span>
       </div>
 
       <div class="entry-detail">

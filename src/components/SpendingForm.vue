@@ -5,13 +5,12 @@
       :key="formField.field"
       :field="formField.field"
       :label="formField.label"
+      :type="formField.type"
+      :options="formField.options"
       v-model="formField.value"
     />
-<!--     
-    <label :for="formFields[0].field">{{ formFields[0].label }}</label>
-    <input type="text" :id="formFields[0].field" v-model="formFields[0].value" /> -->
 
-    <button type="button" for="spending-form" @click="addEntry">Add entry</button>
+    <button type="button" for="spending-form" :disabled="!isValid" @click="addEntry">Add entry</button>
   </div>
 </template>
 
@@ -33,51 +32,64 @@ export default {
           field: 'itemName',
           label: 'Item name',
           value: '',
+          type: 'text',
         },
         {
           field: 'entryDate',
           label: 'Date',
-          value: '',
+          value: new Date().toISOString().split('T')[0],
+          type: 'date',
         },
         {
           field: 'amount',
           label: 'Amount',
-          value: '',
+          value: 0,
+          type: 'text',
         },
         {
           field: 'category',
           label: 'Category',
-          value: '',
+          value: 'Food/Drink',
+          type: 'select',
+          options: ['Food/Drink', 'Entertainment', 'Beauty/Health', 'Clothing', 'Gifts'],
         },
         {
           field: 'note',
           label: 'Note',
           value: '',
+          type: 'text',
         },
       ],
+    }
+  },
+
+  computed: {
+    isValid() {
+      const amountField = this.formFields.find(({ field }) => field === 'amount');
+      const itemNameField = this.formFields.find(({ field }) => field === 'itemName');
+      return amountField.value && itemNameField.value;
     }
   },
 
   methods: {
     async addEntry() {
       const entry = this.formatEntry();
+      console.log({entry})
     
-    await createEntry(entry);
+      await createEntry(entry);
       await listEntries();
+      this.$emit('newEntryAdded');
     },
     
     formatEntry() {
       console.log(this.formFields)
-      const test = this.formFields.reduce((result, { field, value }) => {
+      return this.formFields.reduce((result, { field, value }) => {
         const key = humps(field);
+        const val = key === 'amount' ? parseFloat(value) : value;
         
-        result[key] = value;
-        console.log({key, result, value})
+        result[key] = val;
         return result;
       }, {});
-
-      console.log({test})
-      return test
     },
   }
 }
